@@ -37,6 +37,53 @@ router.get("", async (req, res) => {
   }
 });
 
+router.get("/post/:id", async (req, res) => {
+  try {
+    let slug = req.params.id;
+
+    const data = await Post.findById({ _id: slug });
+
+    const locals = {
+      title: data.title,
+      description:
+        data.content.substring(0, 100) +
+        (data.content.length > 100 ? "..." : ""),
+    };
+
+    res.render("post", {
+      locals,
+      data,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+router.post("/search", async (req, res) => {
+  try {
+    const locals = {
+      title: "Search",
+      description: "Search results",
+    };
+    let searchTerm = req.body.searchTerm;
+    const searchNoSpecialChar = searchTerm.replace(/[^a-zA-Z0-9 ]/g, "");
+
+    const data = await Post.find({
+      $or: [
+        { title: { $regex: new RegExp(searchNoSpecialChar, "i") } },
+        { content: { $regex: new RegExp(searchNoSpecialChar, "i") } },
+      ],
+    });
+
+    res.render("search", {
+      data,
+      locals,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 router.get("/about", (req, res) => {
   res.render("about");
 });
