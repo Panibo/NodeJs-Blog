@@ -31,6 +31,7 @@ router.get("", async (req, res) => {
       current: page,
       hasNextPage,
       nextPage: hasNextPage ? nextPage : null,
+      currentRoute: "/",
     });
   } catch (err) {
     console.error(err);
@@ -53,6 +54,7 @@ router.get("/post/:id", async (req, res) => {
     res.render("post", {
       locals,
       data,
+      currentRoute: `/post/${slug}`,
     });
   } catch (err) {
     console.error(err);
@@ -78,6 +80,7 @@ router.post("/search", async (req, res) => {
     res.render("search", {
       data,
       locals,
+      currentRoute: "/search",
     });
   } catch (err) {
     console.log(err);
@@ -85,7 +88,10 @@ router.post("/search", async (req, res) => {
 });
 
 router.get("/about", (req, res) => {
-  res.render("about");
+  res.render("about", { currentRoute: "/about" });
 });
 
+router.get("/contact", (req, res) => {
+  res.render("contact", { currentRoute: "/contact" });
+});
 module.exports = router;
